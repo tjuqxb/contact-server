@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-var mongoDB = "mongodb+srv://m001-student:m001-mogodb-basics@sandbox.lpukd.mongodb.net/angular_contacts?retryWrites=true&w=majority";
+var mongoDB = process.env.DB_URI;
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 require('./model/User');
 
