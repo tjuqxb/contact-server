@@ -1,10 +1,14 @@
 var express = require('express');
 const router = express.Router();
-const {parameterValidate, check_api_token} = require('../middleware/Validator');
+const {parameterValidate} = require('../middleware/Validator');
 const md5 = require('blueimp-md5');
 const jwt = require('jwt-simple');
 const moment = require('moment');
 const userController  = require('../controller/UserController');
+const tagController = require('../controller/TagController');
+const log4js = require('log4js');
+const logger = log4js.getLogger();
+//logger.level = "OFF";
 
 
 router.post("/register", parameterValidate({
@@ -25,14 +29,25 @@ router.post("/register", parameterValidate({
     }
     const encryptedPass = md5(password);
     const newUser = await userController.createUser(email, encryptedPass);
+    logger.info(newUser);
     const token = jwt.encode({
         iss: newUser._id, // id
         exp: moment().add('days', 7).valueOf() // token expires in 7 days
     }, 'ccontact');
+    const friendTag = tagController.createTag({
+        name:'Friend',
+        color:'',
+        user: newUser._id,
+    });
+    const familyTag = tagController.createTag({
+        name:'Family',
+        color:'',
+        user: newUser._id,
+    });
     res.status(201).json({
         token,
         user: {
-            id: user._id,
+            id: newUser._id,
             email: email
         }
     })

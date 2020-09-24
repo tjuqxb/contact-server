@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const Contact = mongoose.model("contacts");
+const log4js = require('log4js');
+const logger = log4js.getLogger();
+logger.level = 'debug';
 
 module.exports = {
     editContact: (changeContact) => {
@@ -13,8 +16,7 @@ module.exports = {
         }).then((doc) => {
             return doc.save();
         }).catch(err => {
-            console.log(err);
-            return Promise.reject(err);
+            logger.info(err);
         });
         },
 
@@ -31,9 +33,14 @@ module.exports = {
 
     deleteContact: (id) => {
         return Contact.findByIdAndDelete(id);
-    }
+    },
 
-    getContacts: (userId) => {
-
+    getContactsByUser: (userId) => {
+        const query = {
+            user: new mongoose.Types.ObjectId(userId)
+        };
+        return Contact.find(query).catch(err => {
+            logger.info(err);
+        })
     }
 }

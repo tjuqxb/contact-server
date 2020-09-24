@@ -30,6 +30,15 @@ module.exports = {
 
     deleteTag: (id) => {
         return Tag.findByIdAndDelete(id);
+    },
+
+    getTagsByUser: (userId) => {
+        const query = {
+            user: new mongoose.Types.ObjectId(userId)
+        };
+        return Tag.find(query).catch(err => {
+            logger.info(err);
+        })
     }
 
 }
